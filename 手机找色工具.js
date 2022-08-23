@@ -1,153 +1,74 @@
-/**
-
- *作者QQ: 1811588980
-
- **/
-
-toastLog("Are you ready？");
-
 var IMG, img;
 
 if (!requestScreenCapture()) {
-
     toast("请求截图失败");
-
     exit();
-
-};
-
+}
 IMG = captureScreen();
-
 img = images.copy(IMG);
-
-var window = floaty.rawWindow(
-
+var mainView = floaty.rawWindow(
     <vertical id="vertical" bg="#aaaaaa" w="850px" h="989px" gravity="center">
-
         <canvas id="canvas" margin="5dp" layout_weight="1"/>
-
         <horizontal id="horizontal" margin="5dp" w="*" gravity="center">
-
-            <button id="butJ" layout_weight="1" text="截图"/>
-
-            <button id="butCun" layout_weight="1" text="存图"/>
-
-            <button id="butX" layout_weight="1" text="选图"/>
-
-            <button id="butY" layout_weight="1" text="移动"/>
-
-            <button id="butG" layout_weight="1" text="关闭"/>
-
+            <button id="btnSnip" layout_weight="1" text="截图"/>
+            <button id="btnSavePic" layout_weight="1" text="存图"/>
+            <button id="btnSelectPic" layout_weight="1" text="选图"/>
+            <button id="btnMove" layout_weight="1" text="移动"/>
+            <button id="btnExit" layout_weight="1" text="退出"/>
         </horizontal>
-
     </vertical>
-
 );
-
-var window_ = floaty.window(
-
-    <button id="but_" w="150px" h="150px" text="▽" alpha="0.7"/>
-
-);
-
-var ad = new 悬浮控制(window, window.butY, 1, window.vertical);
-
-var ad_ = new 悬浮控制(window_, window_.but_);
-
+var suspendedView = floaty.window(<button id="but_" w="150px" h="150px" text="▽" alpha="0.7"/>);
+var ad = new 悬浮控制(mainView, mainView.btnMove, 1, mainView.vertical);
+var ad_ = new 悬浮控制(suspendedView, suspendedView.but_);
 var F = ad.OutScreen();
-
 var F_ = ad_.OutScreen();
-
-threads.start(function() {
-
+threads.start(function () {
     sleep(100);
-
     F_ = ad_.OutScreen();
-
     ad_.windowyidong(F_);
-
 });
-
-ad.setClick(function() {
-
-    //window.disableFocus();
-
-    threads.start(function() {
-
+ad.setClick(function () {
+//window.disableFocus();
+    threads.start(function () {
         F = ad.OutScreen();
-
         ad.windowyidong(F);
-
         ad_.windowyidong([F_[1], ad_.centerXY(ad.centerXY(F[0])[0])[1]]);
-
         ad_.windowyidong(ad_.IntScreen());
-
         ad_.windowyidong(ad_.toScreenEdge(0));
-
     });
-
 });
-
-ad_.setClick(function() {
-
-    //window.disableFocus();
-
-    threads.start(function() {
-
+ad_.setClick(function () {
+//window.disableFocus();
+    threads.start(function () {
         F_ = ad_.OutScreen();
-
         ad_.windowyidong(F_);
-
         ad.windowyidong([F[1], ad.centerXY(ad_.centerXY(F_[0])[0])[1]]);
-
         ad.windowyidong(ad.IntScreen());
-
     });
-
 });
-
-window.butJ.click(function() {
-
-    threads.start(function() {
-
+mainView.btnSnip.click(function () {
+    threads.start(function () {
         var F = ad.OutScreen();
-
         ad.windowyidong(F);
-
         sleep(100);
-
         var IMG = captureScreen();
-
         //img.recycle();
-
         img = images.copy(IMG);
-
         ad.windowyidong(F.reverse());
-
     });
-
 });
 
-window.butCun.click(function() {
-
-    threads.start(function() {
-
-        log(window.canvas)
-
-        log(window.canvas.get())
-
+mainView.btnSavePic.click(function () {
+    threads.start(function () {
+        log(mainView.canvas)
+        log(mainView.canvas.get())
         log(img)
-
     });
-
 });
-
-window.butX.click(function() {
-
-    threads.start(function() {
-
+mainView.btnSelectPic.click(function () {
+    threads.start(function () {
         var F = ad.OutScreen();
-
         ad.windowyidong(F);
 
         var Apath = "/sdcard";
@@ -162,7 +83,8 @@ window.butX.click(function() {
 
             img = images.copy(IMG);
 
-        };
+        }
+        ;
 
         ad.windowyidong(F.reverse());
 
@@ -170,7 +92,7 @@ window.butX.click(function() {
 
 });
 
-window.butG.on("click", () => {
+mainView.btnExit.on("click", () => {
 
     exit()
 
@@ -206,11 +128,11 @@ var data = {
 
 };
 
-threads.start(function() {
+threads.start(function () {
 
     sleep(100);
 
-    window.setPosition(device.width / 2 - window.getWidth() / 2, device.height / 2 - window.getHeight() / 2);
+    mainView.setPosition(device.width / 2 - mainView.getWidth() / 2, device.height / 2 - mainView.getHeight() / 2);
 
     sleep(100);
 
@@ -218,9 +140,9 @@ threads.start(function() {
 
         translate: {
 
-            x: -(window.getX() + window.canvas.getX()),
+            x: -(mainView.getX() + mainView.canvas.getX()),
 
-            y: -(window.getY() + window.canvas.getY())
+            y: -(mainView.getY() + mainView.canvas.getY())
 
         },
 
@@ -238,17 +160,18 @@ setInterval(() => {
 
         ui.run(() => {
 
-            window.vertical.attr("bg", colors.toString(反色(点色.color)));
+            mainView.vertical.attr("bg", colors.toString(反色(点色.color)));
 
-            window.horizontal.attr("bg", 点色.colorString);
+            mainView.horizontal.attr("bg", 点色.colorString);
 
         });
 
-    };
+    }
+    ;
 
 }, 50);
 
-window.canvas.on("draw", function(canvas) {
+mainView.canvas.on("draw", function (canvas) {
 
     canvas.drawARGB(255, 127, 127, 127);
 
@@ -258,7 +181,8 @@ window.canvas.on("draw", function(canvas) {
 
             return;
 
-        };
+        }
+        ;
 
         var w = canvas.getWidth();
 
@@ -344,7 +268,8 @@ window.canvas.on("draw", function(canvas) {
 
         //toastLog("canvas"+e);
 
-    };
+    }
+    ;
 
 });
 
@@ -388,7 +313,7 @@ var Wx, Wy, fuzhiid = 0,
 
     fuzhi = false;
 
-window.canvas.setOnTouchListener(function(view, event) {
+mainView.canvas.setOnTouchListener(function (view, event) {
 
     try {
 
@@ -420,7 +345,8 @@ window.canvas.setOnTouchListener(function(view, event) {
 
                     break;
 
-                };
+                }
+                ;
 
                 var PC = event.getPointerCount();
 
@@ -430,9 +356,9 @@ window.canvas.setOnTouchListener(function(view, event) {
 
                         translate: {
 
-                            x: -(window.getX() + window.canvas.getX()),
+                            x: -(mainView.getX() + mainView.canvas.getX()),
 
-                            y: -(window.getY() + window.canvas.getY())
+                            y: -(mainView.getY() + mainView.canvas.getY())
 
                         },
 
@@ -440,7 +366,8 @@ window.canvas.setOnTouchListener(function(view, event) {
 
                     };
 
-                };
+                }
+                ;
 
                 Touch[id] = {
 
@@ -454,7 +381,6 @@ window.canvas.setOnTouchListener(function(view, event) {
 
                 //复制对象。
 
-                
 
                 break;
 
@@ -464,7 +390,8 @@ window.canvas.setOnTouchListener(function(view, event) {
 
                     break
 
-                };
+                }
+                ;
 
                 var PC = event.getPointerCount();
 
@@ -512,9 +439,9 @@ window.canvas.setOnTouchListener(function(view, event) {
 
                         translate: {
 
-                            x: -(window.getX() + window.canvas.getX()),
+                            x: -(mainView.getX() + mainView.canvas.getX()),
 
-                            y: -(window.getY() + window.canvas.getY())
+                            y: -(mainView.getY() + mainView.canvas.getY())
 
                         },
 
@@ -522,7 +449,8 @@ window.canvas.setOnTouchListener(function(view, event) {
 
                     };
 
-                };
+                }
+                ;
 
                 break;
 
@@ -540,13 +468,15 @@ window.canvas.setOnTouchListener(function(view, event) {
 
                         toastLog("已复制 \n" + JSON.stringify(点色));
 
-                    };
+                    }
+                    ;
 
                     fuzhi = false;
 
                     break;
 
-                };
+                }
+                ;
 
                 Touch[id] = undefined;
 
@@ -570,15 +500,18 @@ window.canvas.setOnTouchListener(function(view, event) {
 
                         };
 
-                    };
+                    }
+                    ;
 
-                };
+                }
+                ;
 
                 //log(PC);
 
                 break;
 
-        };
+        }
+        ;
 
         return true;
 
@@ -588,29 +521,30 @@ window.canvas.setOnTouchListener(function(view, event) {
 
         return true;
 
-    };
+    }
+    ;
 
 });
 
 /*
 
-window.butJ.click(() => {
+window.btnSnip.click(() => {
 
-    threads.start(function() {
+threads.start(function() {
 
-        var X=window.getX(),Y=window.getY();
+    var X=window.getX(),Y=window.getY();
 
-        window.setPosition(device.width, device.height);
+    window.setPosition(device.width, device.height);
 
-        sleep(100);
+    sleep(100);
 
-        var IMG = 截图();
+    var IMG = 截图();
 
-        img = images.copy(IMG);
+    img = images.copy(IMG);
 
-        window.setPosition(X,Y);
+    window.setPosition(X,Y);
 
-    });
+});
 
 });
 
@@ -622,11 +556,12 @@ function 加载图片(A) {
 
         return images.read(A);
 
-    };
+    }
+    ;
 
     var dir = "/storage/emulated/0/脚本/study/temp/";
 
-    var jsFiles = files.listDir(dir, function(name) {
+    var jsFiles = files.listDir(dir, function (name) {
 
         return (name.endsWith(".jpg") || name.endsWith(".png")) && files.isFile(files.join(dir, name));
 
@@ -646,7 +581,8 @@ function 加载图片(A) {
 
         exit();
 
-    };
+    }
+    ;
 
 };
 
@@ -656,7 +592,7 @@ function listpath(Apath, Bpath) {
 
     var path = files.join(Apath, Bpath);
 
-    var a = files.listDir(path, function(name) {
+    var a = files.listDir(path, function (name) {
 
         return name.endsWith(".jpg") || name.endsWith(".png") || files.isDir(files.join(path, name));
 
@@ -710,7 +646,7 @@ function 反色(color) {
 
 function getsd(s, ary) {
 
-    //将数组内所有值的平方和开方等于s
+//将数组内所有值的平方和开方等于s
 
     var sum = weiyi(ary);
 
@@ -720,7 +656,8 @@ function getsd(s, ary) {
 
         ary[i] = ary[i] * S;
 
-    };
+    }
+    ;
 
     return ary;
 
@@ -728,7 +665,7 @@ function getsd(s, ary) {
 
 function weiyi(ary) {
 
-    //数组所有值平方和开方
+//数组所有值平方和开方
 
     var sum = 0;
 
@@ -736,7 +673,8 @@ function weiyi(ary) {
 
         sum += Math.pow(ary[i], 2);
 
-    };
+    }
+    ;
 
     return Math.sqrt(sum);
 
@@ -744,7 +682,7 @@ function weiyi(ary) {
 
 function kdfx(Y) {
 
-    //数学二维坐标系xy,输入角度。
+//数学二维坐标系xy,输入角度。
 
     var x = Math.cos(Y % 360 / 360 * 2 * Math.PI);
 
@@ -756,7 +694,7 @@ function kdfx(Y) {
 
 function ydfx(ary) {
 
-    //数学二维坐标系xy,返回角度。
+//数学二维坐标系xy,返回角度。
 
     var ary = getsd(1, ary);
 
@@ -770,7 +708,8 @@ function ydfx(ary) {
 
         Y = 180 - Y;
 
-    };
+    }
+    ;
 
     return Y;
 
@@ -822,15 +761,19 @@ function 悬浮控制(window, windowid, ar) {
 
     this.isAutoIntScreen = true;
 
-    this.Click = function() {};
+    this.Click = function () {
+    };
 
-    this.Move = function() {};
+    this.Move = function () {
+    };
 
-    this.LongClick = function() {};
+    this.LongClick = function () {
+    };
 
     this.setClick = (fun) => {
 
-        fun = fun || function() {};
+        fun = fun || function () {
+        };
 
         this.Click = fun;
 
@@ -838,7 +781,8 @@ function 悬浮控制(window, windowid, ar) {
 
     this.setMove = (fun) => {
 
-        fun = fun || function() {};
+        fun = fun || function () {
+        };
 
         this.Move = fun;
 
@@ -846,7 +790,8 @@ function 悬浮控制(window, windowid, ar) {
 
     this.setLongClick = (fun, ji) => {
 
-        fun = fun || function() {};
+        fun = fun || function () {
+        };
 
         this.LongClick = fun;
 
@@ -854,7 +799,8 @@ function 悬浮控制(window, windowid, ar) {
 
             this.Tjitime = parseInt(ji) / 50;
 
-        };
+        }
+        ;
 
     };
 
@@ -878,7 +824,8 @@ function 悬浮控制(window, windowid, ar) {
 
             ]);
 
-        };
+        }
+        ;
 
     }, 100);
 
@@ -914,9 +861,11 @@ function 悬浮控制(window, windowid, ar) {
 
                 this.LongClick();
 
-            };
+            }
+            ;
 
-        };
+        }
+        ;
 
     }, 50);
 
@@ -952,13 +901,15 @@ function 悬浮控制(window, windowid, ar) {
 
                         this.Tyidong = true;
 
-                    };
+                    }
+                    ;
 
                     if (this.Tyidong && this.Tkeep) {
 
                         window.setPosition(this.TX + sx, this.TY + sy);
 
-                    };
+                    }
+                    ;
 
                     break;
 
@@ -968,7 +919,8 @@ function 悬浮控制(window, windowid, ar) {
 
                         this.Click();
 
-                    };
+                    }
+                    ;
 
                     this.Tkeep = false;
 
@@ -992,21 +944,25 @@ function 悬浮控制(window, windowid, ar) {
 
                             }));
 
-                        };
+                        }
+                        ;
 
                         this.Tyidong = false;
 
-                    };
+                    }
+                    ;
 
                     break;
 
-            };
+            }
+            ;
 
             return true;
 
         }));
 
-    };
+    }
+    ;
 
     this.G = (win, view) => {
 
@@ -1068,13 +1024,14 @@ function 悬浮控制(window, windowid, ar) {
 
             }
 
-        };
+        }
+        ;
 
         return ary;
 
     };
 
-    this.weiyi = function() { //平方和开方
+    this.weiyi = function () { //平方和开方
 
         var num = 0;
 
@@ -1082,13 +1039,14 @@ function 悬浮控制(window, windowid, ar) {
 
             num += arguments[i] * arguments[i];
 
-        };
+        }
+        ;
 
         return Math.round(Math.sqrt(num) * 1000) / 1000
 
     };
 
-    this.windowGXY = function(x, y, k) {
+    this.windowGXY = function (x, y, k) {
 
         //修正坐标的所在范围。如果坐标超出了范围，则修正回来。
 
@@ -1138,7 +1096,8 @@ function 悬浮控制(window, windowid, ar) {
 
             w.setPosition(A[0][0] + x, A[0][1] + y);
 
-        };
+        }
+        ;
 
         w.setPosition(A[1][0], A[1][1]);
 
